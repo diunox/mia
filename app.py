@@ -60,6 +60,8 @@ def testing():
     lowest = min(time_to_upload)
     highest = max(time_to_upload)
 
+    # cleanup /tmp
+    os.system("rm -f /tmp/*")
     return render_template("results.html", total_time=total_time, mean=mean, lowest=lowest, highest=highest)
 
 
