@@ -56,7 +56,7 @@ def testing():
     total_end = time.time()
     total_time = total_end - total_start
 
-    mean = sum(time_to_upload) / numfiles
+    mean = sum(time_to_upload) / int(numfiles)
     lowest = min(time_to_upload)
     highest = max(time_to_upload)
 
