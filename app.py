@@ -12,6 +12,7 @@ region = ""
 endpoint = ""
 accesskey = ""
 secretkey = ""
+saveobjects = False
 postresults = {}
 
 application = Flask(__name__)
@@ -32,6 +33,7 @@ def posttesting():
     global endpoint
     global accesskey
     global secretkey
+    global saveobjects
     global postresults
 
     minblock = request.form['minblock']
@@ -43,8 +45,14 @@ def posttesting():
     accesskey = request.form['accesskey']
     secretkey = request.form['secretkey']
 
+    # saveobjects logic, default to False, only flip on box check
+    if request.form.get('saveobjects'):
+        saveobjects = True
+
     # timer storage
     time_to_upload = []
+
+
 
     try:
         for x in range(numfiles):
@@ -104,9 +112,8 @@ def gettesting():
     global endpoint
     global accesskey
     global secretkey
+    global saveobjects
     global postresults
-
-    print("about to start uploads")
 
     # timer storage
     time_to_download = []
@@ -122,19 +129,23 @@ def gettesting():
         message = "Error initializing session, details potentially below:"
         return render_template("error.html", error=error)
 
-    total_start = time.time()
-    for x in range(numfiles):
-        local_start = time.time()
-        client.download_file(bucket,  # Name of Space
-            'file.{}'.format(x),  # Name for remote file
-            '/tmp/file.{}'.format(x))  # Name and path for local file
+    try:
+        total_start = time.time()
+        for x in range(numfiles):
+            local_start = time.time()
+            client.download_file(bucket,  # Name of Space
+                'file.{}'.format(x),  # Name for remote file
+                '/tmp/file.{}'.format(x))  # Name and path for local file
 
-        local_end = time.time()
-        local_time = local_end - local_start
-        time_to_download.append(local_time)
+            local_end = time.time()
+            local_time = local_end - local_start
+            time_to_download.append(local_time)
 
-    total_end = time.time()
-    total_time = total_end - total_start
+        total_end = time.time()
+        total_time = total_end - total_start
+    except Exception as error:
+        message = "Error occurred during download, details potentially below:"
+        return render_template("error.html", error=error)
 
     # cleanup /tmp
     os.system("rm -f /tmp/file.*")
@@ -143,17 +154,22 @@ def gettesting():
     lowest = min(time_to_download)
     highest = max(time_to_download)
 
+    # If saveobjects is FALSE then delete, otherwise skip
+    if not saveobjects:
+        try:
+            # cleanup logic goes here
+            filedict = [{"Key": f"file.{n}"} for n in range(numfiles)]
+            response = client.delete_objects(
+                Bucket=bucket,
+                Delete={
+                    'Objects': filedict,
+                    'Quiet': True
+                },
+            )
+        except Exception as error:
+            message = "Error occurred during object cleanup, details potentially below:"
+            return render_template("error.html", error=error)
 
-    # cleanup logic goes here
-    filedict = [{"Key": f"file.{n}"} for n in range(numfiles)]
-    response = client.delete_objects(
-        Bucket=bucket,
-        Delete={
-            'Objects': filedict,
-            'Quiet': True
-        },
-    )
-    
     return render_template("results.html", post_total_time=postresults['total'],
                            post_mean=postresults['mean'], 
                            post_lowest=postresults['lowest'], 
