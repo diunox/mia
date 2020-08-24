@@ -1,13 +1,27 @@
 <html>
 <head>     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"> </head>
    <body>
-   Total time: {{total_time}}
+   Post tests:
    </br>
-   Minimum time: {{lowest}}
+   Total time: {{post_total_time}}
    </br>
-   Maximum time: {{highest}}
+   Minimum time: {{post_lowest}}
    </br>
-   Average time: {{mean}}
+   Maximum time: {{post_highest}}
+   </br>
+   Average time: {{post_mean}}
+   </br>
+   </br>
+   </br>
+   Get tests:
+   </br>
+   Total time: {{get_total_time}}
+   </br>
+   Minimum time: {{get_lowest}}
+   </br>
+   Maximum time: {{get_highest}}
+   </br>
+   Average time: {{get_mean}}
    </br>
     </body>
 </html>
