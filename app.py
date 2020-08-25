@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from sqlalchemy import create_engine, MetaData, Table, Column, DECIMAL, String
+from sqlalchemy import create_engine, MetaData, Table, Column, DECIMAL, Integer, String
 import boto3
 import os
 import time
@@ -27,6 +27,9 @@ def db_setup():
         'results', meta,
         Column('bucket', String),
         Column('endpoint', String),
+        Column('minblock', Integer),
+        Column('maxblock', Integer),
+        Column('numfiles', Integer),
         Column('postmin', DECIMAL),
         Column('postmax', DECIMAL),
         Column('postmean', DECIMAL),
@@ -212,7 +215,8 @@ def gettesting():
     results = meta.tables['results']
     ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
                                   postmean=postresults['mean'], posttotal=postresults['total'],
-                                  getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time)
+                                  getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time,
+                                  minblock=minblock, maxblock=maxblock, numfiles=numfiles)
     conn = engine.connect()
     result = conn.execute(ins)
 
