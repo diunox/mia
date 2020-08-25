@@ -207,7 +207,7 @@ def gettesting():
     #Database work goes here
     dbconn = os.environ['DATABASE_URL']
     engine = create_engine(dbconn, echo=True)
-    meta = MetaData()
+    meta = MetaData(bind=engine, reflect=True)
 
     results = meta.tables['results']
     ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
