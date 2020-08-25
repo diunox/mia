@@ -79,7 +79,7 @@ def posttesting():
                                 aws_secret_access_key=secretkey)
     except Exception as error:
         message = "Error initializing session, details potentially below:"
-        return render_template("error.html", error=error)
+        return render_template("error.html", message=message, error=error)
 
     try:
         total_start = time.time()
@@ -96,7 +96,7 @@ def posttesting():
         total_time = total_end - total_start
     except Exception as error:
         message = "Error occurred during upload, details potentially below:"
-        return render_template("error.html", error=error)
+        return render_template("error.html", message=message, error=error)
     # cleanup /tmp
     os.system("rm -f /tmp/file.*")
 
@@ -164,7 +164,7 @@ def gettesting():
                                 aws_secret_access_key=secretkey)
     except Exception as error:
         message = "Error initializing session, details potentially below:"
-        return render_template("error.html", error=error)
+        return render_template("error.html", message=message, error=error)
 
     try:
         total_start = time.time()
@@ -182,7 +182,7 @@ def gettesting():
         total_time = total_end - total_start
     except Exception as error:
         message = "Error occurred during download, details potentially below:"
-        return render_template("error.html", error=error)
+        return render_template("error.html", message=message, error=error)
 
     # cleanup /tmp
     os.system("rm -f /tmp/file.*")
@@ -207,19 +207,23 @@ def gettesting():
             message = "Error occurred during object cleanup, details potentially below:"
             return render_template("error.html", error=error)
 
-    #Database work goes here
-    dbconn = os.environ['DATABASE_URL']
-    engine = create_engine(dbconn, echo=True)
-    meta = MetaData(bind=engine, reflect=True)
+    # Database work goes here
 
-    results = meta.tables['results']
-    ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
-                                  postmean=postresults['mean'], posttotal=postresults['total'],
-                                  getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time,
-                                  minblock=minblock, maxblock=maxblock, numfiles=numfiles)
-    conn = engine.connect()
-    result = conn.execute(ins)
+    try:
+        dbconn = os.environ['DATABASE_URL']
+        engine = create_engine(dbconn, echo=True)
+        meta = MetaData(bind=engine, reflect=True)
 
+        results = meta.tables['results']
+        ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
+                                      postmean=postresults['mean'], posttotal=postresults['total'],
+                                      getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time,
+                                      minblock=minblock, maxblock=maxblock, numfiles=numfiles)
+        conn = engine.connect()
+        result = conn.execute(ins)
+    except Exception as error:
+        message = "Error occurred while writing to the database, details potentially below:"
+        return render_template("error.html", message=message, error=error)
     return render_template("results.html", post_total_time=postresults['total'],
                            post_mean=postresults['mean'], 
                            post_lowest=postresults['lowest'], 
