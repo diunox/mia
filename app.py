@@ -204,6 +204,18 @@ def gettesting():
             message = "Error occurred during object cleanup, details potentially below:"
             return render_template("error.html", error=error)
 
+    #Database work goes here
+    dbconn = os.environ['DATABASE_URL']
+    engine = create_engine(dbconn, echo=True)
+    meta = MetaData()
+
+    results = meta.tables['users']
+    ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
+                                  postmean=postresults['mean'], posttotal=postresults['total'],
+                                  getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time)
+    conn = engine.connect()
+    result = conn.execute(ins)
+
     return render_template("results.html", post_total_time=postresults['total'],
                            post_mean=postresults['mean'], 
                            post_lowest=postresults['lowest'], 
