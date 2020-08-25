@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from sqlalchemy import create_engine, MetaData, Table, Column, DECIMAL, String
 import boto3
 import os
 import time
@@ -16,6 +17,26 @@ postresults = {}
 
 application = Flask(__name__)
 
+@application.before_first_request
+def db_setup():
+    dbconn = os.environ['DATABASE_URL']
+    engine = create_engine(dbconn, echo=True)
+    meta = MetaData()
+
+    results = Table(
+        'results', meta,
+        Column('bucket', String),
+        Column('endpoint', String),
+        Column('postmin', DECIMAL),
+        Column('postmax', DECIMAL),
+        Column('postmean', DECIMAL),
+        Column('posttotal', DECIMAL),
+        Column('getmin', DECIMAL),
+        Column('getmax', DECIMAL),
+        Column('getmean', DECIMAL),
+        Column('gettotal', DECIMAL),
+    )
+    meta.create_all(engine)
 
 @application.route("/", methods=['GET'])
 def index():
