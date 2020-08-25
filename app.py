@@ -1,7 +1,6 @@
 from flask import Flask, render_template
 import boto3
 import os
-import threading
 import time
 from flask import request
 
@@ -23,10 +22,8 @@ def index():
     return render_template("index.html")
 
 
-@application.route("/post-testing", methods=['POST'])
+@application.route("/post-testing", methods=['POST', 'GET'])
 def posttesting():
-
-    # Form variables
     global numfiles
     global bucket
     global region
@@ -35,24 +32,11 @@ def posttesting():
     global secretkey
     global saveobjects
     global postresults
-
-    minblock = request.form['minblock']
-    maxblock = request.form['maxblock']
-    numfiles = int(request.form['numfiles'])
-    bucket = request.form['bucket']
-    region = request.form['region']
-    endpoint = request.form['endpoint']
-    accesskey = request.form['accesskey']
-    secretkey = request.form['secretkey']
-
-    # saveobjects logic, default to False, only flip on box check
-    if request.form.get('saveobjects'):
-        saveobjects = True
+    global minblock
+    global maxblock
 
     # timer storage
     time_to_upload = []
-
-
 
     try:
         for x in range(numfiles):
@@ -61,7 +45,7 @@ def posttesting():
 
     except Exception as error:
         message = "Error generating objects, details potentially below:"
-        return render_template("error.html", error=error)
+        return render_template("error.html", message=message, error=error)
     try:
         session = boto3.session.Session()
         client = session.client('s3',
@@ -103,6 +87,35 @@ def posttesting():
 
     return render_template("partial-results.html", total_time=total_time, mean=mean, lowest=lowest, highest=highest)
 
+@application.route("/inprogress", methods=['POST'])
+def inprogress():
+
+    # Form variables
+    global numfiles
+    global bucket
+    global region
+    global endpoint
+    global accesskey
+    global secretkey
+    global saveobjects
+    global postresults
+    global minblock
+    global maxblock
+
+    minblock = request.form['minblock']
+    maxblock = request.form['maxblock']
+    numfiles = int(request.form['numfiles'])
+    bucket = request.form['bucket']
+    region = request.form['region']
+    endpoint = request.form['endpoint']
+    accesskey = request.form['accesskey']
+    secretkey = request.form['secretkey']
+
+    # saveobjects logic, default to False, only flip on box check
+    if request.form.get('saveobjects'):
+        saveobjects = True
+
+    return render_template("inprogress.html")
 
 @application.route("/get-testing", methods=['GET'])
 def gettesting():

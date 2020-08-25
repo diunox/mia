@@ -4,21 +4,52 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
    <body>
-      <form action = "/post-testing" method = "POST">
+      <form action = "/inprogress" method = "POST">
          <image src="https://archive72.sfo2.digitaloceanspaces.com/misc_media/DOLogo.png" height="450" width="450"></image>
-         <p>Welcome to the S3 Storage Benchmarker. Currently supported vendors are DigitalOcean Spaces, Vultr, Linode, AWS S3, and any other cloud that can interface with boto3(GCP is not supported). Note that all data and objects generated here are ephemeral, and you should not use production keys with this tool. Please input your: </p>
-         <p>Region Name (i.e. sfo2):<input type = "text" name = "region" /></p>
-         <p>Endpoint URL (i.e. https://sfo2.digitaloceanspaces.com):<input type = "text" name = "endpoint" /></p>
-         <p>Bucket Name:<input type = "text" name = "bucket" /></p>
-         <p>Access Key: <input type = "text" name = "accesskey" /></p>
-         <p>Secret Key: <input type = "text" name = "secretkey" /></p>
-         <p>dd's count is set to <b>1024.</b> Adjust the block size below to generate objects of various size and shape.</p>
-         <p>A min of 1 and max of 1024 will generate objects between 1KB and 1MB, a min of 1024 and a max of 1048576 will generate between 1 MB and 1 GB</p>
-         <p>Minimum block size: <input type = "text" name = "minblock" /></p>
-         <p>Maximum block size: <input type = "text" name = "maxblock" /></p>
-         <p>Number of files: <input type = "text" name = "numfiles" /></p>
-         <p>Save objects? (No deletion of objects from bucket, may incur charges depending on provider) <input type="checkbox" name="saveobjects"/></p>
+         <br />
+         dd's count is set to <b>1024.</b> Adjust the block size below to generate objects of various size and shape.
+         A min of 1 and max of 1024 will generate objects between 1KB and 1MB, a min of 1024 and a max of 1048576 will generate between 1 MB and 1 GB.
+         Note that there is ~1.8 GB of disk free, so generate appropriately sized objects.
 
+         <table>
+            <p>Welcome to the S3 Storage Benchmarker. Currently supported vendors are DigitalOcean Spaces, Vultr, Linode, AWS S3, and any other cloud that can interface with boto3(GCP is not supported). Note that all data and objects generated here are ephemeral, and you should not use production keys with this tool. Please input your: </p>
+            <tr>
+               <td align="right">Region Name (i.e. sfo2):</td>
+               <td align="left"><input type = "text" name = "region" /></td>
+            </tr>
+            <tr>
+               <td align="right">Endpoint URL (i.e. https://sfo2.digitaloceanspaces.com):</td>
+               <td align="left"><input type = "text" name = "endpoint" /></td>
+            </tr>
+            <tr>
+               <td align="right">Bucket Name:</td>
+               <td align="left"><input type = "text" name = "bucket" /></td>
+            </tr>
+            <tr>
+               <td align="right">Access Key:</td>
+               <td align="left"><input type = "text" name = "accesskey" /></td>
+            </tr>
+            <tr>
+               <td align="right">Secret Key:</td>
+               <td align="left"><input type = "text" name = "secretkey" /> </td>
+            </tr>
+            <tr>
+               <td align="right">Minimum block size:</td>
+               <td align="left"><input type = "text" name = "minblock" /></td>
+            </tr>
+            <tr>
+               <td align="right">Maximum block size:</td>
+               <td align="left"><input type = "text" name = "maxblock" /></td>
+            </tr>
+            <tr>
+               <td align="right">Number of files:</td>
+               <td><input type = "text" name = "numfiles" /></td>
+            </tr>
+            <tr>
+               <td align="right">Save objects? (No deletion of objects from bucket)</td>
+               <td align="left"><input type="checkbox" name="saveobjects"/> </td>
+            </tr>
+         </table>
          <p><input type = "submit" value = "submit" /></p>
       </form>
    </body>
