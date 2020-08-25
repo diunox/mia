@@ -209,7 +209,7 @@ def gettesting():
     engine = create_engine(dbconn, echo=True)
     meta = MetaData()
 
-    results = meta.tables['users']
+    results = meta.tables['results']
     ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
                                   postmean=postresults['mean'], posttotal=postresults['total'],
                                   getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time)
