@@ -215,7 +215,7 @@ def gettesting():
         meta = MetaData(bind=engine, reflect=True)
 
         results = meta.tables['results']
-        ins = results.insert().values(postmin=postresults['lowest'], postmax=postresults['highest'],
+        ins = results.insert().values(bucket=bucket, endpoint=endpoint, postmin=postresults['lowest'], postmax=postresults['highest'],
                                       postmean=postresults['mean'], posttotal=postresults['total'],
                                       getmin=lowest, getmax=highest, getmean=mean, gettotal=total_time,
                                       minblock=minblock, maxblock=maxblock, numfiles=numfiles)
